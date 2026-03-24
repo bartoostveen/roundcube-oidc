@@ -116,10 +116,9 @@ class roundcube_oidc extends rcube_plugin
             $RCMAIL->session->set_auth_cookie();
 
             // Update user profile
-            $iid = $RCMAIL->user->get_identity()['identity_id'];
-            if (!isset($iid)) {
-                throw new Error("User ID must be set!");
-            }
+            $identity = $RCMAIL->user->list_identities()[$RCMAIL->user->get_prefs()['default_id'] ?? 0];
+            $iid = $identity['identity_id'];
+            syslog(LOG_NOTICE, "Updating user " . $uid . " identity " . $iid . " with name " . $user['name']);
             $RCMAIL->user->update_identity($iid, array(
                 'name' => $user['name'],
                 'email' => $uid, // as per docs, uid == email

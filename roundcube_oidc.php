@@ -49,6 +49,17 @@ class roundcube_oidc extends rcube_plugin
         // Add the login link
         $content['content'] .= "<p> <a href='?oidc=1'> Login with OIDC </a> </p>";
 
+        // OIDC logout
+        // TODO: use Roundcube APIs to do this and to obtain whether it was an OIDC session
+        if (isset($_GET['_task']) && strtolower(trim($_GET['_task'])) == 'logout') {
+            $oidc_logout_url = trim($RCMAIL->config->get('oidc_logout_url'));
+            if (!empty($oidc_logout_url)) {
+                header(sprintf('Location: %s', $oidc_logout_url));
+                $this->altReturn(null);
+                return $content;
+            }
+        }
+
         // Check if we are starting or resuming oidc auth
         if (!isset($_GET['code']) && !isset($_GET['oidc'])) {
             if ($RCMAIL->config->get('oidc_force')) {

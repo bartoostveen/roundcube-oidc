@@ -20,6 +20,9 @@ $config['oidc_config_master_user'] = '';
 // URL for OIDC
 $config['oidc_url'] = 'https://oidc.example.com';
 
+// Logout URL for OIDC
+$config['oidc_logout_url'] = '';
+
 // Client ID already registered on the provider
 $config['oidc_client'] = 'client_id';
 

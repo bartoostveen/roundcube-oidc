@@ -43,20 +43,24 @@ class roundcube_oidc extends rcube_plugin
 
     public function loginform($content)
     {
+        // Get mail object
+        $RCMAIL = rcmail::get_instance();
+
         // Add the login link
         $content['content'] .= "<p> <a href='?oidc=1'> Login with OIDC </a> </p>";
 
         // Check if we are starting or resuming oidc auth
         if (!isset($_GET['code']) && !isset($_GET['oidc'])) {
-            $this->altReturn(null);
-            return $content;
+            if ($RCMAIL->config->get('oidc_force')) {
+                $_GET['oidc'] = 1;
+            } else {
+                $this->altReturn(null);
+                return $content;
+            }
         }
 
         // Define error for alt login
         $ERROR = '';
-
-        // Get mail object
-        $RCMAIL = rcmail::get_instance();
 
         // Get master password and default imap server
         $password = $RCMAIL->config->get('oidc_imap_master_password');

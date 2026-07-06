@@ -1,1 +1,7 @@
-vendor
+/vendor
+/.envrc
+/.direnv
+/result*
+/repl-result*
+.gopath/
+.idea/

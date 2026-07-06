@@ -40,6 +40,7 @@
 
         perSystem =
           {
+            self',
             pkgs,
             ...
           }:
@@ -55,6 +56,46 @@
                 version = self.shortRev or self.dirtyShortRev or "dirty-norev";
                 __intentionallyOverridingVersion = true;
               };
+              withConfig = pkgs.callPackage (
+                {
+                  stdenv,
+                  roundcube-oidc ? self'.packages.default,
+                  writeText,
+                  runCommand,
+                  lib,
+                  php,
+                  configText ? "",
+                }:
+
+                let
+                  inherit (lib) getExe optionalString;
+
+                  config = writeText "roundcube-oidc-config.php" configText;
+                  configChecked = runCommand "roundcube-oidc-config-checked" { } ''
+                    ${getExe php} -l ${config}
+                    cp ${config} $out
+                  '';
+                in
+                stdenv.mkDerivation {
+                  pname = "${roundcube-oidc.pname}-wrapped";
+                  inherit (roundcube-oidc) version meta;
+
+                  dontUnpack = true;
+                  installPhase = ''
+                    runHook preInstall
+                    mkdir -p $out/plugins/roundcube_oidc
+                    ln -s ${roundcube-oidc}/plugins/roundcube_oidc/* $out/plugins/roundcube_oidc
+
+                    ${optionalString (configText == "") ''
+                      cp $out/plugins/roundcube_oidc/config.inc.php.dist $out/plugins/roundcube_oidc/config.inc.php
+                    ''}
+
+                    ${optionalString (configText != "") ''
+                      cp ${configChecked} $out/plugins/roundcube_oidc/config.inc.php
+                    ''}
+                  '';
+                }
+              ) { };
             };
 
             devShells.default = pkgs.mkShell {

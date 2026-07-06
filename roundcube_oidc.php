@@ -83,7 +83,7 @@ class roundcube_oidc extends rcube_plugin
             $RCMAIL->config->get('oidc_client'),
             $RCMAIL->config->get('oidc_secret')
         );
-        $oidc->addScope(preg_split(" ", $RCMAIL->config->get('oidc_scope')));
+        $oidc->addScope(explode(' ', $RCMAIL->config->get('oidc_scope')));
 
         // Get user information
         try {

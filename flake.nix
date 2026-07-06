@@ -52,7 +52,7 @@
 
             packages = {
               default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
-                version = self.rev or self.dirtyRev;
+                version = self.shortRev or self.dirtyShortRev or "dirty-norev";
                 __intentionallyOverridingVersion = true;
               };
             };

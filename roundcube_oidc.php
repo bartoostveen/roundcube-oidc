@@ -1,6 +1,5 @@
 <?php
 
-// Require composer autoload for direct installs
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Jumbojett\OpenIDConnectClient;

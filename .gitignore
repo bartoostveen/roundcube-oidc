@@ -5,3 +5,4 @@
 /repl-result*
 .gopath/
 .idea/
+dist/

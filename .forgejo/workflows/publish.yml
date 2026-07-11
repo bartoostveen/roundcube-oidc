@@ -1,0 +1,30 @@
+name: create release dist
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  release:
+    runs-on: [gpg, native-x86_64-linux]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-home@85c04dfa32da72ea8d9d9058601121a7194672fa
+        with:
+          gpg-privkey: ${{ secrets.GPG_PRIVKEY }}
+          gpg-key-id: ${{ vars.GPG_KEY_ID }}
+      - name: build
+        run: nix build .#
+      - name: create archive
+        run: |
+          mkdir -p dist/release
+          cp -rL --no-preserve all result/* dist/
+          cd dist
+          zip -x release/ -X -r release/${FORGEJO_REPOSITORY##*/}-${FORGEJO_REF_NAME}.zip .
+      - name: create release
+        id: release
+        uses: https://git.bartoostveen.nl/bart/forgejo-release.git@74bd5d3064257c896a1499ddcf18ac1161189d47 # v2
+        with:
+          direction: upload
+          gpg-private-key: ${{ secrets.GPG_PRIVKEY }}

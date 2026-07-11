@@ -24,7 +24,7 @@ jobs:
           zip -x release/ -X -r release/${FORGEJO_REPOSITORY##*/}-${FORGEJO_REF_NAME}.zip .
       - name: create release
         id: release
-        uses: https://git.bartoostveen.nl/bart/forgejo-release.git@74bd5d3064257c896a1499ddcf18ac1161189d47 # v2
+        uses: bart/forgejo-release@74bd5d3064257c896a1499ddcf18ac1161189d47 # v2
         with:
           direction: upload
           gpg-private-key: ${{ secrets.GPG_PRIVKEY }}

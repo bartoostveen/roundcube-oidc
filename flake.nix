@@ -45,6 +45,9 @@
             ...
           }:
 
+          let
+            composerVersion = (./composer.json |> builtins.readFile |> builtins.fromJSON).version;
+          in
           {
             treefmt = {
               programs.nixfmt.enable = true;
@@ -53,7 +56,7 @@
 
             packages = {
               default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
-                version = self.shortRev or self.dirtyShortRev or "dirty-norev";
+                version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
                 __intentionallyOverridingVersion = true;
               };
               withConfig = pkgs.callPackage (

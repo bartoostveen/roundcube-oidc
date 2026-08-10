@@ -9,7 +9,7 @@ php.buildComposerProject2 (_finalAttrs: {
 
   src = ./.;
 
-  vendorHash = "sha256-xzjfS2Uf4mg0CCDxCmvFjplc+/AxbXZ1Bpqr9m+wems=";
+  vendorHash = "sha256-r4+HuiPl6nFzfpW6Uhxr4ATdjuXoCNwKNK8HYYU11yc=";
   composerStrictValidation = false;
 
   installPhase = ''

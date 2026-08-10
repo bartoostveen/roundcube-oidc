@@ -13,11 +13,11 @@
   ],
   "require": {
     "php": ">=7.0",
-    "jumbojett/openid-connect-php": "^1.0.0",
+    "jumbojett/openid-connect-php": "^1.0.2",
     "ext-json": "*"
   },
   "require-dev": {
-    "roundcube/plugin-installer": ">=0.1.6"
+    "roundcube/plugin-installer": ">=0.3.11"
   },
   "config": {
     "allow-plugins": {

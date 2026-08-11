@@ -7,7 +7,12 @@ php.buildComposerProject2 (_finalAttrs: {
   pname = "roundcube-oidc";
   version = "unstable";
 
-  src = ./.;
+  src = lib.cleanSourceWith {
+    src = ./.;
+    name = "source";
+    filter =
+      path: type: type == "regular" && builtins.match ".*(\\.php.*|composer\\.(json|lock))" path != null;
+  };
 
   vendorHash = "sha256-o+ebEMdHZi323hcOEJmRigaFk4c/8xWyhlN8ji0QQXs=";
   composerStrictValidation = false;

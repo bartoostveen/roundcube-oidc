@@ -3,7 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
@@ -25,7 +28,7 @@
   outputs =
     inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } (
-      { ... }:
+      { withSystem, ... }:
 
       {
         systems = [
@@ -38,8 +41,19 @@
           inputs.treefmt-nix.flakeModule
         ];
 
+        flake.overlays.default = _: prev: {
+          roundcube-oidc = withSystem prev.stdenv.hostPlatform.system (
+            { self', ... }: self'.packages.default
+          );
+        };
+
         perSystem =
-          { pkgs, lib, ... }:
+          {
+            pkgs,
+            system,
+            lib,
+            ...
+          }:
 
           let
             inherit (lib) getExe;
@@ -48,6 +62,11 @@
             version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
           in
           {
+            _module.args.pkgs = import inputs.nixpkgs {
+              inherit system;
+              overlays = [ self.overlays.default ];
+            };
+
             treefmt = {
               programs.nixfmt.enable = true;
               programs.deadnix.enable = true;
@@ -73,6 +92,8 @@
                 phpPackages.composer
               ];
             };
+
+            checks.nixos = import ./check.nix |> pkgs.testers.runNixOSTest;
           };
       }
     );

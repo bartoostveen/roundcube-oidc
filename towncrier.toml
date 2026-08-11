@@ -1,0 +1,4 @@
+[tool.towncrier]
+name = "roundcube-oidc"
+directory = "changelog.d"
+filename = "CHANGELOG.md"

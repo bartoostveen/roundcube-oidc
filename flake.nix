@@ -49,6 +49,7 @@
 
         perSystem =
           {
+            self',
             pkgs,
             system,
             lib,
@@ -57,6 +58,7 @@
 
           let
             inherit (lib) getExe;
+            inherit (pkgs.python314Packages) towncrier;
 
             composerVersion = (./composer.json |> builtins.readFile |> builtins.fromJSON).version;
             version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
@@ -81,15 +83,43 @@
               };
             };
 
-            packages.default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
-              inherit version;
-              __intentionallyOverridingVersion = true;
+            packages = {
+              default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
+                inherit version;
+                __intentionallyOverridingVersion = true;
+              };
+              towncrier-build = pkgs.writeShellApplication {
+                name = "towncrier-build";
+                runtimeInputs = [ towncrier ];
+                text = ''
+                  towncrier build --version "${composerVersion}" --yes "$@"
+                '';
+              };
+              tag-release = pkgs.writeShellApplication {
+                name = "tag-release";
+                runtimeInputs = [
+                  pkgs.git
+                  pkgs.nix-update
+                  self'.packages.towncrier-build
+                ];
+                text = ''
+                  towncrier-build
+                  nix-update default -F --version=skip
+                  git add .
+                  git commit -m "chore: Release ${composerVersion}"
+                  git tag "v${composerVersion}" -m "Release ${composerVersion}"
+                  git show
+                '';
+              };
             };
 
             devShells.default = pkgs.mkShell {
               packages = with pkgs; [
                 php
                 phpPackages.composer
+                towncrier
+                self'.packages.towncrier-build
+                self'.packages.tag-release
               ];
             };
 

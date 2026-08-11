@@ -10,6 +10,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 2 # For release note generation
       - uses: actions/setup-home@a4a889b9c11347ff52afd33bd731618604bbb8b1 # v1
         with:
           gpg-privkey: ${{ secrets.GPG_PRIVKEY }}
@@ -20,11 +22,14 @@ jobs:
         run: |
           mkdir -p dist/release
           cp -rL --no-preserve all result/* dist/
-          cd dist
+          pushd dist
           zip -x release/ -X -r release/${FORGEJO_REPOSITORY##*/}-${FORGEJO_REF_NAME}.zip .
+          popd
+          git diff HEAD~ HEAD -- CHANGELOG.md | grep '^[+]' | sed 's/^+//' | tail -n +3 > dist/CHANGELOG.md
       - name: create release
         id: release
         uses: bart/forgejo-release@74bd5d3064257c896a1499ddcf18ac1161189d47 # v2
         with:
           direction: upload
           gpg-private-key: ${{ secrets.GPG_PRIVKEY }}
+          release-notes-file: dist/CHANGELOG.md

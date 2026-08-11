@@ -27,8 +27,8 @@ On NixOS, you may install the plugin like this:
 ```nix
 # flake.nix
 {
-  inputs.roundcube-oidc = {
-    url = "git+https://git.bartoostveen.nl/bart/roundcube-oidc.git";
+  inputs.bart-packages = {
+    url = "git+https://git.bartoostveen.nl/bart/nix-packages.git";
     inputs.nixpkgs.follows = "nixpkgs";
   };
 }
@@ -37,7 +37,7 @@ On NixOS, you may install the plugin like this:
 {
   services.roundcube = {
     enable = true;
-    package = pkgs.roundcube.withPlugins (_: [ inputs.roundcube-oidc.packages.${pkgs.stdenv.system} ]);
+    package = pkgs.roundcube.withPlugins (_: [ inputs.bart-packages.packages.${pkgs.stdenv.hostPlatform.system}.roundcube-oidc ]);
     plugins = [ "roundcube_oidc" ];
   };
 }
@@ -48,7 +48,7 @@ On NixOS, you may install the plugin like this:
     enable = true;
     package = pkgs.roundcube.withPlugins (_: [
       (
-        inputs.roundcube-oidc.packages.${pkgs.stdenv.system}.withConfig.override {
+        inputs.bart-packages.packages.${pkgs.stdenv.hostPlatform.system}.roundcube-oidc.override {
           configText = ''
             <?php
 

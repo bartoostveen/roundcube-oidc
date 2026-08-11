@@ -18,14 +18,14 @@ class roundcube_oidc extends rcube_plugin
     public $task = 'login|logout';
     private $map;
 
-    function init()
+    public function init()
     {
         $this->load_config('config.inc.php.dist');
         $this->load_config();
-        $this->add_hook('template_object_loginform', array($this, 'loginform'));
+        $this->add_hook('template_object_loginform', [$this, 'loginform']);
     }
 
-    function altReturn($ERROR)
+    public function altReturn($ERROR)
     {
         // Get mail object
         $RCMAIL = rcmail::get_instance();
@@ -80,7 +80,7 @@ class roundcube_oidc extends rcube_plugin
         $oidc = new OpenIDConnectClient(
             $RCMAIL->config->get('oidc_url'),
             $RCMAIL->config->get('oidc_client'),
-            $RCMAIL->config->get('oidc_secret')
+            $RCMAIL->config->get('oidc_secret'),
         );
         $oidc->addScope(explode(' ', $RCMAIL->config->get('oidc_scope')));
 
@@ -108,12 +108,12 @@ class roundcube_oidc extends rcube_plugin
         }
 
         // Trigger auth hook
-        $auth = $RCMAIL->plugins->exec_hook('authenticate', array(
+        $auth = $RCMAIL->plugins->exec_hook('authenticate', [
             'user' => $uid,
             'pass' => $password,
             'cookiecheck' => true,
             'valid' => true,
-        ));
+        ]);
 
         // Login to IMAP
         if ($RCMAIL->login($auth_uid, $password, $imap_server, $auth['cookiecheck'])) {
@@ -121,22 +121,22 @@ class roundcube_oidc extends rcube_plugin
             $RCMAIL->session->regenerate_id(false);
             $RCMAIL->session->set_auth_cookie();
             $RCMAIL->log_login();
-            $query = array();
-            $redir = $RCMAIL->plugins->exec_hook('login_after', $query + array('_task' => 'mail'));
+            $query = [];
+            $redir = $RCMAIL->plugins->exec_hook('login_after', $query + ['_task' => 'mail']);
             unset($redir['abort'], $redir['_err']);
-            $query = array('_action' => '');
+            $query = ['_action' => ''];
             $OUTPUT = new rcmail_html_page();
-            $redir = $RCMAIL->plugins->exec_hook('login_after', $query + array('_task' => 'mail'));
+            $redir = $RCMAIL->plugins->exec_hook('login_after', $query + ['_task' => 'mail']);
             $RCMAIL->session->set_auth_cookie();
 
             // Update user profile
             $identity = $RCMAIL->user->list_identities()[$RCMAIL->user->get_prefs()['default_id'] ?? 0];
             $iid = $identity['identity_id'];
             syslog(LOG_NOTICE, "Updating user " . $uid . " identity " . $iid . " with name " . $user['name']);
-            $RCMAIL->user->update_identity($iid, array(
+            $RCMAIL->user->update_identity($iid, [
                 'name' => $user['name'],
                 'email' => $uid, // as per docs, uid == email
-            ));
+            ]);
 
             $OUTPUT->redirect($redir, 0, true);
         } else {
@@ -148,4 +148,3 @@ class roundcube_oidc extends rcube_plugin
         return $content;
     }
 }
-

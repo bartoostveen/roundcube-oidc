@@ -39,66 +39,32 @@
         ];
 
         perSystem =
-          {
-            self',
-            pkgs,
-            ...
-          }:
+          { pkgs, lib, ... }:
 
           let
+            inherit (lib) getExe;
+
             composerVersion = (./composer.json |> builtins.readFile |> builtins.fromJSON).version;
+            version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
           in
           {
             treefmt = {
               programs.nixfmt.enable = true;
               programs.deadnix.enable = true;
+              programs.php-cs-fixer.enable = true;
+              settings.phpstan = {
+                command = getExe pkgs.phpstan;
+                options = [
+                  "--memory-limit=1024M"
+                  "--fix"
+                ];
+                includes = [ "**/*.php" ];
+              };
             };
 
-            packages = {
-              default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
-                version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
-                __intentionallyOverridingVersion = true;
-              };
-              withConfig = pkgs.callPackage (
-                {
-                  stdenv,
-                  roundcube-oidc ? self'.packages.default,
-                  writeText,
-                  runCommand,
-                  lib,
-                  php,
-                  configText ? "",
-                }:
-
-                let
-                  inherit (lib) getExe optionalString;
-
-                  config = writeText "roundcube-oidc-config.php" configText;
-                  configChecked = runCommand "roundcube-oidc-config-checked" { } ''
-                    ${getExe php} -l ${config}
-                    cp ${config} $out
-                  '';
-                in
-                stdenv.mkDerivation {
-                  pname = "${roundcube-oidc.pname}-wrapped";
-                  inherit (roundcube-oidc) version meta;
-
-                  dontUnpack = true;
-                  installPhase = ''
-                    runHook preInstall
-                    mkdir -p $out/plugins/roundcube_oidc
-                    ln -s ${roundcube-oidc}/plugins/roundcube_oidc/* $out/plugins/roundcube_oidc
-
-                    ${optionalString (configText == "") ''
-                      cp $out/plugins/roundcube_oidc/config.inc.php.dist $out/plugins/roundcube_oidc/config.inc.php
-                    ''}
-
-                    ${optionalString (configText != "") ''
-                      cp ${configChecked} $out/plugins/roundcube_oidc/config.inc.php
-                    ''}
-                  '';
-                }
-              ) { };
+            packages.default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
+              inherit version;
+              __intentionallyOverridingVersion = true;
             };
 
             devShells.default = pkgs.mkShell {

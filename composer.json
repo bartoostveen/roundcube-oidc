@@ -6,9 +6,8 @@
   "version": "1.2.17",
   "authors": [
     {
-      "name": "Varun Patil",
-      "email": "radialapps@gmail.com",
-      "role": "Lead"
+      "name": "Bart Oostveen",
+      "email": "bart@bartoostveen.nl"
     }
   ],
   "require": {

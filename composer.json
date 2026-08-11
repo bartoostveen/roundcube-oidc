@@ -3,7 +3,7 @@
   "type": "roundcube-plugin",
   "description": "OpenID Connect 1.0 login plugin for roundcube",
   "license": "MIT",
-  "version": "1.2.17",
+  "version": "1.3.0",
   "authors": [
     {
       "name": "Bart Oostveen",

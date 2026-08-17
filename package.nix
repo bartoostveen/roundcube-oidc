@@ -3,7 +3,7 @@
   php,
 }:
 
-php.buildComposerProject2 (_finalAttrs: {
+php.buildComposerProject2 (finalAttrs: {
   pname = "roundcube-oidc";
   version = "unstable";
 
@@ -25,8 +25,9 @@ php.buildComposerProject2 (_finalAttrs: {
   meta = {
     description = "OpenID Connect authentication plugin for Roundcube";
     homepage = "https://git.bartoostveen.nl/bart/roundcube-oidc";
+    changelog = "https://git.bartoostveen.nl/bart/roundcube-oidc/src/tag/v${finalAttrs.version}/CHANGELOG.md";
+    maintainers = with lib.maintainers; [ bartoostveen ];
     license = lib.licenses.mit;
-    mainProgram = "roundcube-oidc";
     platforms = lib.platforms.all;
   };
 })

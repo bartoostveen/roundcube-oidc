@@ -66,7 +66,10 @@
           {
             _module.args.pkgs = import inputs.nixpkgs {
               inherit system;
-              overlays = [ self.overlays.default ];
+              overlays = [
+                self.overlays.default
+                (final: _: { php = final.php85; })
+              ];
             };
 
             treefmt = {

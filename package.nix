@@ -14,7 +14,7 @@ php.buildComposerProject2 (finalAttrs: {
       path: type: type == "regular" && builtins.match ".*(\\.php.*|composer\\.(json|lock))" path != null;
   };
 
-  vendorHash = "sha256-1lmNFpftIbvjqbd4Sn54KOdQuiERU7EpR6d2NKlyKsU=";
+  vendorHash = "sha256-s10d9IZHlTJ/F7PMWEqjLjS5OV60mCKQd3Ac79a4ikA=";
   composerStrictValidation = false;
 
   installPhase = ''

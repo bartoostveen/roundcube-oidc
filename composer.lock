@@ -2126,16 +2126,16 @@
         },
         {
             "name": "roundcube/roundcubemail",
-            "version": "1.7.3",
+            "version": "1.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/roundcube/roundcubemail.git",
-                "reference": "8473c30fd06f1aa4cfe4304ec54f54aef3b45abe"
+                "reference": "0d05c37a6e565b1ff0f3a4472081f20a64d569a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roundcube/roundcubemail/zipball/8473c30fd06f1aa4cfe4304ec54f54aef3b45abe",
-                "reference": "8473c30fd06f1aa4cfe4304ec54f54aef3b45abe",
+                "url": "https://api.github.com/repos/roundcube/roundcubemail/zipball/0d05c37a6e565b1ff0f3a4472081f20a64d569a1",
+                "reference": "0d05c37a6e565b1ff0f3a4472081f20a64d569a1",
                 "shasum": ""
             },
             "require": {
@@ -2221,9 +2221,9 @@
             "description": "The Roundcube Webmail suite",
             "support": {
                 "issues": "https://github.com/roundcube/roundcubemail/issues",
-                "source": "https://github.com/roundcube/roundcubemail/tree/1.7.3"
+                "source": "https://github.com/roundcube/roundcubemail/tree/1.7.4"
             },
-            "time": "2026-08-09T07:48:08+00:00"
+            "time": "2026-09-06T06:38:25+00:00"
         },
         {
             "name": "roundcube/rtf-html-php",

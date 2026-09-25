@@ -4,6 +4,13 @@ OpenID Connect authentication plugin for Roundcube.
 
 <!-- towncrier release notes start -->
 
+# roundcube-oidc 1.3.4 (2026-09-25)
+
+## Misc
+
+- Updated dependencies for security reasons. No high-severity changes.
+
+
 # roundcube-oidc 1.3.3 (2026-09-07)
 
 ## Misc

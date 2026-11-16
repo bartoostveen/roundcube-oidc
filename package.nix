@@ -5,7 +5,7 @@
 
 php.buildComposerProject2 (finalAttrs: {
   pname = "roundcube-oidc";
-  version = "unstable";
+  version = "1.3.6";
 
   src = lib.cleanSourceWith {
     src = ./.;
@@ -14,8 +14,7 @@ php.buildComposerProject2 (finalAttrs: {
       path: type: type == "regular" && builtins.match ".*(\\.php.*|composer\\.(json|lock))" path != null;
   };
 
-  vendorHash = "sha256-6Hc1Kl7iLvgH1Eps64qJP6NSKuws/Cdy6c6e+TynYR4=";
-  composerStrictValidation = false;
+  vendorHash = "sha256-bRPmwZS6orMjsnW/yklcWUY2mA03gDYml9Iu4X6aRI0=";
 
   installPhase = ''
     mkdir -p $out/plugins/roundcube_oidc

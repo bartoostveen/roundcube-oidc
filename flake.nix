@@ -59,9 +59,7 @@
           let
             inherit (lib) getExe;
             inherit (pkgs.python314Packages) towncrier;
-
-            composerVersion = (./composer.json |> builtins.readFile |> builtins.fromJSON).version;
-            version = "${composerVersion}-${self.shortRev or self.dirtyShortRev or "dirty-norev"}";
+            inherit (self'.packages.default) version;
           in
           {
             _module.args.pkgs = import inputs.nixpkgs {
@@ -87,15 +85,12 @@
             };
 
             packages = {
-              default = (pkgs.callPackage ./package.nix { }).overrideAttrs {
-                inherit version;
-                __intentionallyOverridingVersion = true;
-              };
+              default = pkgs.callPackage ./package.nix { };
               towncrier-build = pkgs.writeShellApplication {
                 name = "towncrier-build";
                 runtimeInputs = [ towncrier ];
                 text = ''
-                  towncrier build --version "${composerVersion}" --yes "$@"
+                  towncrier build --version "${version}" --yes "$@"
                 '';
               };
               tag-release = pkgs.writeShellApplication {
@@ -107,10 +102,11 @@
                 ];
                 text = ''
                   towncrier-build
+                  nix flake archive
                   nix-update default -F --version=skip
                   git add .
-                  git commit -m "chore: Release ${composerVersion}"
-                  git tag "v${composerVersion}" -m "Release ${composerVersion}"
+                  git commit -m "chore: Release ${version}"
+                  git tag "v${version}" -m "Release ${version}"
                   git show
                 '';
               };
